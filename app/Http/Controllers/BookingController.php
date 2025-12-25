@@ -193,9 +193,11 @@ class BookingController extends Controller
     }
 
     public function form()
-{
-    return view('form_pemesanan');
-}
+    {
+        $packages = Package::where('is_active', true)->get();
+
+        return view('form_pemesanan', compact('packages'));
+    }
 
 
     public function detail(Booking $booking)

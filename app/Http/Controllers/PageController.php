@@ -157,21 +157,14 @@ public function index()
             return redirect()->route('login');
         }
 
-        try {
-            if (\Schema::hasTable('bookings')) {
-                $bookings = Auth::user()->bookings()
-                    ->with(['package', 'packageDate'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            } else {
-                $bookings = collect([]);
-            }
-        } catch (\Exception $e) {
-            $bookings = collect([]);
-        }
+        $bookings = Booking::with(['package', 'packageDate'])
+            ->where('user_id', Auth::id())
+            ->orderByDesc('id')
+            ->get();
 
         return view('umrohsaya', compact('bookings'));
     }
+
 
     public function profile()
     {
