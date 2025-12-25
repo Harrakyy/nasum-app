@@ -16,6 +16,12 @@ use App\Http\Controllers\PackageController;
 */
 Route::get('/booking', [BookingController::class, 'form'])
     ->name('booking.form');
+Route::post('/pesan', [BookingController::class, 'webStore'])
+    ->name('booking.store')
+    ->middleware('auth');
+Route::get('/booking', [BookingController::class, 'form'])
+    ->name('booking.form')
+    ->middleware('auth');
 Route::post('/midtrans/notification', [PaymentController::class, 'handleNotification'])
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 Route::get('/', [PageController::class, 'index'])->name('home');
