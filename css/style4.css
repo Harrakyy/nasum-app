@@ -1,0 +1,22 @@
+/* Penyesuaian untuk Halaman Umroh Saya dan Hubungi Kami */
+
+/* Warna Navbar dan Footer #1A061F */
+.navbar, footer, .bg-dark {
+    background-color: #1A061F !important;
+  }
+  
+  /* Mengatur ulang padding-top pada body agar konten tidak turun terlalu jauh */
+  body {
+      padding-top: 0 !important;
+  }
+  
+  /* Menggunakan padding-top minimal pada section konten utama 
+     untuk mengimbangi navbar fixed-top, membuatnya lebih rapat (65px-80px biasanya ideal) */
+  .umroh-saya-section, .contact-section {
+      padding-top: 80px !important; 
+  }
+  
+  /* Mengubah warna teks pada footer agar tetap kontras */
+  footer h5 {
+    color: white !important; /* Agar Kantor Jakarta, Padang, Bandung tetap terlihat jelas */
+  }
