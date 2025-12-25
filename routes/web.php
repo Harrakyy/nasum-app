@@ -14,8 +14,8 @@ use App\Http\Controllers\PackageController;
 | Public Pages
 |--------------------------------------------------------------------------
 */
-Route::get('/booking/{booking}', [BookingController::class, 'detail'])
-    ->name('booking.detail');
+Route::get('/booking', [BookingController::class, 'form'])
+    ->name('booking.form');
 Route::post('/midtrans/notification', [PaymentController::class, 'handleNotification'])
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 Route::get('/', [PageController::class, 'index'])->name('home');

@@ -192,6 +192,12 @@ class BookingController extends Controller
         return back()->with('success', 'Booking dihapus.');
     }
 
+    public function form()
+{
+    return view('form_pemesanan');
+}
+
+
     public function detail(Booking $booking)
 {
     // keamanan: pastikan booking milik user
