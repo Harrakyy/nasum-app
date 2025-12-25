@@ -202,41 +202,117 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>dindas</td>
-                                <td>dindasdl@gmail.com</td>
-                                <td>08xx xxx xxxx</td>
-                                <td>Paket Ekonomi</td>
-                                <td>15 Januari 2025</td>
-                                <td>Triple</td>
-                                <td class="fw-bold text-success">Rp 25.000.000</td>
-                                <td class="text-danger">Belum Bayar</td>
-                                <td>9 November 2025 pukul 21.17</td>
-                                <td>
-                                    <a href="#" class="btn-aksi" title="Hapus Pendaftar" data-bs-toggle="modal"
-                                        data-bs-target="#hapusPendaftarModal">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>sadad</td>
-                                <td>sdsadad@gmail.com</td>
-                                <td>08xx xxx xxxx</td>
-                                <td>Paket Silver</td>
-                                <td>19 Februari 2025</td>
-                                <td>Double</td>
-                                <td class="fw-bold text-success">Rp 35.000.000</td>
-                                <td class="text-danger">Belum Bayar</td>
-                                <td>9 November 2025 pukul 21.23</td>
-                                <td>
-                                    <a href="#" class="btn-aksi" title="Hapus Pendaftar" data-bs-toggle="modal"
-                                        data-bs-target="#hapusPendaftarModal">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
+                                            @forelse ($bookings as $booking)
+                                            <tr>
+                                                <td>{{ $booking->user->name }}</td>
+                                                <td>{{ $booking->user->email }}</td>
+                                                <td>{{ $booking->user->phone ?? '-' }}</td>
+
+                                                {{-- Nama Paket --}}
+                                                <td>
+                                                    Paket {{ 
+                                                        str_replace(
+                                                            ['+', 'Umroh'],
+                                                            ['', 'Umroh '],
+                                                            $booking->package->name
+                                                        )
+                                                    }}
+                                                </td>
+
+                                                {{-- Tanggal Keberangkatan --}}
+                                                <td>
+                                                    {{ 
+                                                        $booking->packageDate 
+                                                            ? \Carbon\Carbon::parse($booking->packageDate->departure_date)->translatedFormat('d F Y')
+                                                            : '-' 
+                                                    }}
+                                                </td>
+
+                                                {{-- Tipe Kamar --}}
+                                                <td class="text-capitalize">
+                                                    {{ $booking->room_type }}
+                                                </td>
+
+                                                {{-- Harga --}}
+                                                <td class="fw-bold text-success">
+                                                    Rp {{ number_format($booking->price, 0, ',', '.') }}
+                                                </td>
+
+                                                {{-- Status Bayar --}}
+                                                <td>
+                                                    @if($booking->payment_status === 'pending')
+                                                        <span class="badge bg-danger">Belum Bayar</span>
+                                                    @elseif($booking->payment_status === 'paid')
+                                                        <span class="badge bg-success">Sudah Bayar</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">{{ $booking->payment_status }}</span>
+                                                    @endif
+                                                </td>
+
+                                                {{-- Waktu Daftar --}}
+                                                <td>
+                                                    {{ $booking->created_at->translatedFormat('d F Y \p\u\k\u\l H.i') }}
+                                                </td>
+
+                                                {{-- Aksi --}}
+                                                <td>
+                                                    <button 
+                                                            class="btn btn-link text-danger p-0"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#hapusModal{{ $booking->id }}"
+                                                            title="Hapus Pendaftar">
+                                                            <i class="bi bi-trash fs-5"></i>
+                                                        </button>
+
+                                                        {{-- Modal Konfirmasi --}}
+                                                        <div class="modal fade" id="hapusModal{{ $booking->id }}" tabindex="-1">
+                                                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                                <div class="modal-content text-center p-3">
+
+                                                                    <div class="modal-header border-0 justify-content-center">
+                                                                        <h5 class="text-danger">
+                                                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                                            Konfirmasi Hapus
+                                                                        </h5>
+                                                                    </div>
+
+                                                                    <div class="modal-body">
+                                                                        <p class="mb-2">
+                                                                            Yakin ingin menghapus pendaftar:
+                                                                        </p>
+                                                                        <strong>{{ $booking->user->name }}</strong>
+                                                                        <p class="small text-muted mt-2">
+                                                                            Data yang dihapus tidak dapat dikembalikan.
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="modal-footer border-0 justify-content-center">
+                                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                                                                            Batal
+                                                                        </button>
+
+                                                                        <form action="{{ route('admin.booking.delete', $booking->id) }}" method="POST">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                                Hapus
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                </td>
+                                            </tr>
+                                            @empty
+                                            <tr>
+                                                <td colspan="10" class="text-center text-muted">
+                                                    Belum ada pendaftar umroh
+                                                </td>
+                                            </tr>
+                                            @endforelse
+                                            </tbody>
                     </table>
                 </div>
 

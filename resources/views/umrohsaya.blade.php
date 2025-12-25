@@ -98,19 +98,78 @@
                 </div>
 
                 <div class="col-md-9 pt-5">
-                    <div class="status-alert rounded d-flex align-items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffc107"
-                            class="bi bi-exclamation-triangle-fill flex-shrink-0 me-3" viewBox="0 0 16 16" role="img"
-                            aria-label="Warning:">
-                            <path
-                                d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.91.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.09 5.995C7.046 5.462 7.465 5 8 5zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-                        </svg>
-                        <div>
-                            <h5 class="mb-1 fw-bold">Tidak Ada Pemesanan Yang Belum Selesai</h5>
-                            <p class="mb-0 small">Bila Anda tidak dapat menyelesaikan proses pemesanan, kami akan
-                                menyimpannya di sini.</p>
+                    @if($bookings->isEmpty())
+                        <div class="status-alert rounded d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                 fill="#ffc107" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-3"></svg>
+                            <div>
+                                <h5 class="mb-1 fw-bold">Belum Ada Pemesanan</h5>
+                                <p class="mb-0 small">
+                                    Jika Anda sudah melakukan pemesanan, status akan terlihat di sini.
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    @else
+
+                        {{-- ⭐ LOOP BOOKING --}}
+                        @foreach($bookings as $booking)
+
+                            <div class="card mb-4 shadow-sm p-3">
+
+                                <h5 class="fw-bold">
+                                    Paket: {{ $booking->package->name ?? '-' }}
+                                </h5>
+
+                                <p class="small mb-1">Kode Booking:
+                                    <span class="fw-bold">{{ $booking->booking_code }}</span>
+                                </p>
+
+                                <p class="small mb-1">Keberangkatan:
+                                    <span class="fw-bold">
+                                        {{ $booking->packageDate->display_date ?? '-' }}
+                                    </span>
+                                </p>
+
+                                <p class="small mb-1">Total Pembayaran:
+                                    <span class="fw-bold text-success">
+                                        Rp {{ number_format($booking->total_price, 0, ',', '.') }}
+                                    </span>
+                                </p>
+                                <p class="small mb-1">Status Pembayaran:
+                                   @if($booking->payment_status === 'paid')
+                                    <span class="badge bg-success">Lunas</span>
+
+                                @elseif($booking->payment_status === 'pending')
+                                    <span class="badge bg-warning text-dark">Menunggu Pembayaran</span>
+
+                                @elseif(in_array($booking->payment_status, ['expire', 'cancel', 'deny']))
+                                    <span class="badge bg-danger">Gagal</span>
+
+                                @elseif($booking->payment_status === 'unpaid')
+                                    <span class="badge bg-secondary">Belum Bayar</span>
+                                @endif
+
+                                </p>
+
+
+                                <a href="{{ route('booking.detail', $booking->id) }}"
+                                   class="btn btn-primary btn-sm mt-2">
+                                    Detail Pemesanan
+                                </a>
+
+                                @if($booking->payment_status === 'pending')
+                                    <a href="{{ route('booking.confirmation', $booking->id) }}"
+                                    class="btn btn-success btn-sm mt-2">
+                                        Bayar Sekarang
+                                    </a>
+                                @endif
+
+
+                            </div>
+
+                        @endforeach
+                    @endif
+
                 </div>
 
             </div>

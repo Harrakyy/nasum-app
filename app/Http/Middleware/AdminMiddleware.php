@@ -8,15 +8,12 @@ use Illuminate\Http\Request;
 class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
-    {
-        if (!auth()->check()) {
-            return redirect()->route('login');
-        }
-
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Akses khusus admin');
-        }
-
-        return $next($request);
+{
+    if (auth()->check() && auth()->user()->role === 'user') {
+        return redirect()->route('home')
+            ->with('warning', 'Logout dulu sebelum login admin.');
     }
+
+    return $next($request);
+}
 }

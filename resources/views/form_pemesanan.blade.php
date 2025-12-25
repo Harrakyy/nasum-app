@@ -169,7 +169,10 @@
 
                         <div class="mb-3">
     <label class="form-label small mb-0">Paket Yang Dipilih *</label>
-    <select id="paket_dipilih" class="form-select @error('package_id') is-invalid @enderror" required>
+    <select id="paket_dipilih"
+        name="package_id"
+        class="form-select @error('package_id') is-invalid @enderror"
+        required>
         <option value="">-- Pilih Paket --</option>
         @if($packages && $packages->count() > 0)
             @foreach($packages as $package)
@@ -184,12 +187,12 @@
                     {{ $package->name }} - {{ $package->duration_days }} Hari
                     @php
                         // Tampilkan jenis paket
-                        if($package->type == 'plus_dubai') {
+                        if($package->type == ' paket Umroh + Dubai') {
                             echo '(Umroh + Dubai)';
-                        } elseif($package->type == 'plus_turki') {
+                        } elseif($package->type == 'Paket Umroh + Turki') {
                             echo '(Umroh + Turki)';
                         } else {
-                            echo '(Umroh Reguler)';
+                            echo '( PaketUmroh Reguler)';
                         }
                     @endphp
                 </option>
@@ -207,7 +210,11 @@
                         <h5 class="mb-3">Tanggal Keberangkatan *</h5>
                         
                         <div class="mb-3">
-                            <input type="date" class="form-control" id="tanggal_keberangkatan" value="2025-01-22" required>
+                            <input type="date"
+                                class="form-control"
+                                id="tanggal_keberangkatan"
+                                name="tanggal_keberangkatan"
+                                required>
                         </div>
                         
                         <h5 class="mt-4 mb-3">Tipe Kamar *</h5>
@@ -266,9 +273,9 @@
                 </div>
 
                 <div class="col-lg-8">
-                   <form id="bookingForm" action="{{ route('booking.store') }}" method="POST">
+                  
+    <form method="POST" action="{{ route('booking.store') }}">
     @csrf
-   
     <input type="hidden" name="package_id" id="package_id" value="">
     <input type="hidden" name="room_type" id="room_type" value="">
     <input type="hidden" name="tanggal_keberangkatan" id="tanggal_form" value="">
@@ -440,8 +447,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
      <script>
-        <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
     // 1. Elements
     const paketSelect = document.getElementById('paket_dipilih');
     const roomRadios = document.querySelectorAll('input[name="room_type"]');
@@ -527,33 +533,22 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Update room selection
     roomRadios.forEach(radio => {
-        radio.addEventListener('change', function () {
-            if (!paketSelect) return;
-            
-            const selectedPackage = paketSelect.options[paketSelect.selectedIndex];
-            
-            if (roomTypeField) {
-                roomTypeField.value = this.value;
-            }
-            
-            if (summaryRoom) {
-                summaryRoom.innerText = this.value.toUpperCase();
-            }
-            
-            if (selectedPackage && selectedPackage.value) {
-                const priceKey = this.value + '_price';
-                const price = selectedPackage.dataset[priceKey] || '0';
-                
-                if (hargaField) {
-                    hargaField.value = price;
-                }
-                
-                if (summaryPrice) {
-                    summaryPrice.innerText = formatRupiah(price);
-                }
-            }
-        });
+    radio.addEventListener('change', function () {
+        const selectedPackage = paketSelect.options[paketSelect.selectedIndex];
+        if (!selectedPackage) return;
+
+        roomTypeField.value = this.value;
+        summaryRoom.innerText = this.value.toUpperCase();
+
+        let price = 0;
+        if (this.value === 'double') price = selectedPackage.dataset.double;
+        if (this.value === 'triple') price = selectedPackage.dataset.triple;
+        if (this.value === 'quad')   price = selectedPackage.dataset.quad;
+
+        hargaField.value = price;
+        summaryPrice.innerText = formatRupiah(price);
     });
+});
     
     // Update date selection
     if (tanggalInput) {

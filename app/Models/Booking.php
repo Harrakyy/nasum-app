@@ -9,7 +9,7 @@ class Booking extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+     protected $fillable = [
         'user_id',
         'package_id',
         'package_date_id',
@@ -31,6 +31,7 @@ class Booking extends Model
         'payment_proof',
         'payment_method',
         'payment_date',
+        'snap_token', // ⭐ WAJIB
     ];
 
     protected $casts = [

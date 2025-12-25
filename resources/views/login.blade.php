@@ -142,7 +142,7 @@
             <div class="role-button" id="admin-role">Administrator</div>
         </div>
 
-       <form method="POST" action="{{ url('/login') }}">
+      <form method="POST" id="loginForm" action="{{ url('/login') }}">
     @csrf
 
     <div class="mb-3">
@@ -316,6 +316,29 @@
             }
         }
 
+        const loginForm = document.getElementById('loginForm');
+
+            function setMode(mode) {
+                if (mode === 'user') {
+                    userBtn.classList.add('active');
+                    adminBtn.classList.remove('active');
+
+                    loginForm.action = "/login"; // user login route
+
+                    forgotContainer.style.display = 'block';
+                    registerContainer.style.display = 'block';
+                } 
+                
+                else if (mode === 'admin') {
+                    adminBtn.classList.add('active');
+                    userBtn.classList.remove('active');
+
+                    loginForm.action = "/admin/login"; // ADMIN login route
+
+                    forgotContainer.style.display = 'none';
+                    registerContainer.style.display = 'none';
+                }
+            }
         // Event Listeners
         userBtn.addEventListener('click', () => setMode('user'));
         adminBtn.addEventListener('click', () => setMode('admin'));

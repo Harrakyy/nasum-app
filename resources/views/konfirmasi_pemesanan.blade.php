@@ -57,6 +57,7 @@
 
 <body>
 
+    {{-- NAVBAR --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
         <div class="container">
             <a class="navbar-brand arabic-logo" href="{{route('home')}}">Nasrotul Ummah</a>
@@ -64,79 +65,79 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+
                 <ul class="navbar-nav">
-                    <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link active" href="{{route('home')}}">Beranda</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{route('about')}}">Tentang Kami</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{route('packages')}}">Daftar Umroh</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{route('my.umrah')}}">Umroh Saya</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{route('contact')}}">Hubungi Kami</a></li>
-                     {{-- HANYA MUNCUL JIKA SUDAH LOGIN --}}
-                                                        @auth
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" href="{{ route('my.umrah') }}">Umroh Saya</a>
-                                                            </li>
 
-                                                            <li class="nav-item ms-2">
-                                                                <form action="{{ route('logout') }}" method="POST">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn btn-sm btn-outline-light">
-                                                                        Logout
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        @endauth
+                    @auth
+                        <li class="nav-item"><a class="nav-link" href="{{route('my.umrah')}}">Umroh Saya</a></li>
+                        <li class="nav-item ms-2">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                            </form>
+                        </li>
+                    @endauth
 
-                                                        {{-- HANYA MUNCUL JIKA BELUM LOGIN --}}
-                                                        @guest
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" href="{{ route('login') }}">Login</a>
-                                                            </li>
-                                                        @endguest
-
-                                                    
-
+                    @guest
+                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
+                    @endguest
                 </ul>
+
             </div>
         </div>
     </nav>
 
-                            <section class="confirmation-section">
-                                <div class="container">
-                                    <div class="row g-4">
 
-                                        <div class="content-card">
-                            <h4 class="fw-bold mb-4">Ringkasan Pesanan</h4>
+    {{-- CONTENT --}}
+    <section class="confirmation-section">
+        <div class="container">
 
-                            <div class="mb-3">
-                                <p class="mb-1 text-muted small">Nama Jamaah</p>
-                                <p class="fw-bold">{{ $booking['nama_jamaah'] ?? '-' }}</p>
-                            </div>
+            <div class="row g-4">
 
-                            <div class="row">
-                                <div class="col-6">
-                                    <p class="mb-1 text-muted small">Tipe Kamar</p>
-                                   <p class="fw-bold">{{ ucfirst($booking['room']) }}</p>
-                                </div>
-                                <div class="col-6">
-                                    <p class="mb-1 text-muted small">Paket</p>
-                                   <p class="fw-bold">{{ $booking['paket'] }}</p>
-                                </div>
-                            </div>
+                {{-- RINGKASAN PESANAN --}}
+                <div class="col-md-6">
+                    <div class="content-card">
+                        <h4 class="fw-bold mb-4">Ringkasan Pesanan</h4>
 
-                            <hr class="mt-4">
-
-                            <p class="fw-bold fs-5">Total Pembayaran</p>
-                            <p class="fw-bold text-success fs-4">
-                                Rp {{ number_format($harga, 0, ',', '.') }}
-                            </p>
+                        <div class="mb-3">
+                            <p class="mb-1 text-muted small">Nama Jamaah</p>
+                            <p class="fw-bold">{{ $booking->customer_name }}</p>
                         </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1 text-muted small">Tipe Kamar</p>
+                                <p class="fw-bold text-uppercase">{{ ucfirst($booking->room_type) }}</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1 text-muted small">Paket</p>
+                                <p class="fw-bold text-success fs-4">Paket {{ str_replace('+', '', $booking->package->name) }}</p>
+                            </div>
+                        </div>
+
+                        <hr class="mt-4">
+
+                        <p class="fw-bold fs-5">Total Pembayaran</p>
+                        <p class="fw-bold text-success fs-4">
+                            Rp {{ number_format($booking->total_price, 0, ',', '.') }}
+                        </p>
+                    </div>
                 </div>
 
+                {{-- METODE PEMBAYARAN --}}
                 <div class="col-md-6">
                     <div class="content-card">
                         <h4 class="fw-bold mb-4">Metode Pembayaran</h4>
-                        <p class="text-muted">Pilih metode pembayaran yang Anda inginkan (Virtual Account, Transfer Bank, dll.)</p>
+                        <p class="text-muted">Pilih metode pembayaran yang Anda inginkan (VA, Transfer Bank, dll.)</p>
+
+                        {{-- TOMBOL SNAP MIDTRANS --}}
+                        <button id="pay-button" class="btn btn-primary">
+                            Bayar Sekarang
+                        </button>
+
                     </div>
                 </div>
 
@@ -144,11 +145,13 @@
 
             <div class="d-flex justify-content-end mt-4">
                 <a href="{{ route('booking.form') }}" class="btn btn-kembali me-3 text-decoration-none">Kembali</a>
-                <button type="submit" class="btn btn-lanjutkan">Lanjutkan</button>
+                <a href="{{ route('my.umrah') }}" class="btn btn-lanjutkan">Lanjutkan</a>
             </div>
+
         </div>
     </section>
 
+    {{-- FOOTER --}}
     <footer class="text-white py-5">
         <div class="container">
             <div class="row">
@@ -161,23 +164,51 @@
                         <li>@ummahTravel.bdg</li>
                     </ul>
                 </div>
+
                 <div class="col-md-3 mb-4">
                     <h5 class="text-warning">Kantor Jakarta</h5>
-                    <p class="small">Jl. RS. Fatmawati Raya No.215, RT.5/RW.3, Cilandak Barat,<br>Kec. Cilandak, Kota Jakarta Selatan</p>
+                    <p class="small">Jl. RS. Fatmawati Raya No.215, RT.5/RW.3, Cilandak Barat</p>
                 </div>
+
                 <div class="col-md-3 mb-4">
                     <h5 class="text-warning">Kantor Padang</h5>
-                    <p class="small">Jl. Koto Tuo No.4, Balai Gadang,<br>Kec. Koto Tangah, Kota Padang</p>
+                    <p class="small">Jl. Koto Tuo No.4, Balai Gadang</p>
                 </div>
+
                 <div class="col-md-3 mb-4">
                     <h5 class="text-warning">Kantor Bandung</h5>
-                    <p class="small">Jl. Jurang No.84, Pasteur, Kec. Sukajadi,<br>Kota Bandung</p>
+                    <p class="small">Jl. Jurang No.84, Pasteur</p>
                 </div>
             </div>
         </div>
     </footer>
 
+    {{-- SCRIPT BOOTSTRAP --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
+    {{-- MIDTRANS SNAP --}}
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('services.midtrans.client_key') }}">
+    </script>
+
+    <script>
+        document.getElementById('pay-button').addEventListener('click', function () {
+            snap.pay('{{ $booking->snap_token }}', {
+                onSuccess: function(result){
+                    window.location.href = "{{ route('my.umrah') }}";
+                },
+                onPending: function(result){
+                    alert("Pembayaran pending");
+                },
+                onError: function(result){
+                    alert("Pembayaran gagal");
+                },
+                onClose: function(){
+                    alert("Anda menutup pop-up tanpa menyelesaikan pembayaran");
+                }
+            });
+        });
+    </script>
+
+</body>
 </html>

@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
     <style>
         /* CSS dari style3.css dan Navbar Styling */
@@ -168,6 +169,19 @@
         footer h5 {
             color: #00ff8c !important;
         }
+        :root {
+            --primary-dark: #1A061F;
+            --secondary-green: #3eff3e;
+        }
+        .navbar, footer { background-color: var(--primary-dark) !important; color: white; }
+        body { background-color: #f8f9fa; }
+        .admin-section { padding-top: 100px; min-height: 80vh; }
+        .package-card { background: white; padding: 30px; border-radius: 8px; margin-top: 20px; }
+        .date-item { background: var(--primary-dark); color: white; padding: 8px 15px; margin-bottom: 10px; border-radius: 6px; }
+        .btn-tambah { background: var(--primary-dark); color:white }
+        .btn-simpan { background: var(--primary-dark); color:white }
+        .btn-batal { background:#eee }
+        .btn-hapus-konfirmasi { background:#dc3545; color:white }
     </style>
 </head>
 
@@ -237,7 +251,7 @@
         <div class="container">
 
             <div class="d-flex justify-content-end mb-4">
-                <button class="btn btn-sm btn-dark me-2" data-bs-toggle="modal" data-bs-target="#tambahPaketModal">
+                <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#tambahPaketModal">
                     <i class="bi bi-plus-lg"></i> Tambah Paket
                 </button>
             </div>
@@ -266,35 +280,18 @@
                     <p class="mb-0 fw-bold">Quad <span class="text-success">Rp 22.000.000</span></p>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0">Tanggal Keberangkatan Tersedia</h6>
-                    <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#tambahTanggalModal"
-                        title="Tambah Tanggal">
+                 <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold">Tanggal Keberangkatan</h6>
+                    <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#tambahTanggalModal">
                         <i class="bi bi-plus-lg"></i> Tambah Tanggal
                     </button>
                 </div>
 
-                <div class="date-item">
+               <div class="date-item">
                     <span>12 Februari 2025 (Rabu)</span>
-                    <div class="actions">
-                        <a href="#" title="Edit Tanggal" data-bs-toggle="modal" data-bs-target="#editTanggalModal">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <a href="#" title="Hapus Tanggal" data-bs-toggle="modal" data-bs-target="#hapusTanggalModal">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </div>
                 </div>
                 <div class="date-item">
                     <span>20 Januari 2025 (Rabu)</span>
-                    <div class="actions">
-                        <a href="#" title="Edit Tanggal" data-bs-toggle="modal" data-bs-target="#editTanggalModal">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <a href="#" title="Hapus Tanggal" data-bs-toggle="modal" data-bs-target="#hapusTanggalModal">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </div>
                 </div>
             </div>
 

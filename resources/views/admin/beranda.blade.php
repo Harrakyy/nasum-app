@@ -171,7 +171,7 @@
             <div class="col-md-4">
                 <div class="stat-card">
                     <i class="bi bi-people stat-icon"></i>
-                    <h2 class="fw-bold">2</h2>
+                    <h2 class="fw-bold">{{ $totalPendaftar }}</h2>
                     <p class="text-muted small mb-0">Total Pendaftar</p>
                     <p class="text-secondary mb-0 small mt-1">Jamaah terdaftar</p>
                 </div>
@@ -180,7 +180,7 @@
             <div class="col-md-4">
                 <div class="stat-card">
                     <i class="bi bi-bag-check stat-icon"></i>
-                    <h2 class="fw-bold">4</h2>
+                    <h2 class="fw-bold">{{ $totalPaket }}</h2>
                     <p class="text-muted small mb-0">Total Paket</p>
                     <p class="text-secondary mb-0 small mt-1">Paket Tersedia</p>
                 </div>
@@ -189,7 +189,7 @@
             <div class="col-md-4">
                 <div class="stat-card">
                     <i class="bi bi-calendar-check stat-icon"></i>
-                    <h2 class="fw-bold">16</h2>
+                    <h2 class="fw-bold">{{ $totalTanggal = \DB::table('package_dates')->count(); }}</h2>
                     <p class="text-muted small mb-0">Total Tanggal</p>
                     <p class="text-secondary mb-0 small mt-1">Tanggal Tersedia</p>
                 </div>
@@ -203,24 +203,18 @@
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <h5 class="card-title fw-bold mb-3">Pendaftar per Paket</h5>
-                        <ul class="list-group list-group-flush package-list">
-                            <li class="list-group-item">
-                                <span class="text-muted">Paket Umroh Reguler</span>
-                                <span class="badge badge-jamaah rounded-pill">1 Jamaah</span>
-                            </li>
-                            <li class="list-group-item">
-                                <span class="text-muted">Paket Umroh Plus Dubai</span>
-                                <span class="badge badge-jamaah rounded-pill">1 Jamaah</span>
-                            </li>
-                            <li class="list-group-item">
-                                <span class="text-muted">Paket Umroh Plus Turkey</span>
-                                <span class="badge badge-jamaah rounded-pill">0 Jamaah</span>
-                            </li>
-                            <li class="list-group-item">
-                                <span class="text-muted">Paket Umroh Plus Jepang</span>
-                                <span class="badge badge-jamaah rounded-pill">0 Jamaah</span>
-                            </li>
-                        </ul>
+                            <ul class="list-group list-group-flush package-list">
+                                @foreach($pendaftarPerPaket as $paket)
+                                    <li class="list-group-item">
+                                        <span class="text-muted">
+                                            Paket {{ trim(str_replace('+', '', $paket->name)) }}
+                                        </span>
+                                        <span class="badge badge-jamaah rounded-pill">
+                                            {{ $paket->total_jamaah }} Jamaah
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ul>
                     </div>
                 </div>
             </div>
@@ -230,7 +224,7 @@
                     <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
                         <i class="bi bi-credit-card-2-front fs-3 text-warning"></i>
                         <h5 class="card-title fw-bold mt-2">Pembayaran Menunggu Verifikasi</h5>
-                        <h3 class="fw-bold text-danger">1 Pembayaran</h3>
+                        <h3 class="fw-bold text-danger"> {{ $pendingPayments }} Pembayaran</h3>
                         <p class="text-muted small mt-3">Perlu diverifikasi di tab **"Verifikasi Pembayaran"**</p>
                     </div>
                 </div>

@@ -241,41 +241,60 @@ public function index()
     return view('form_pemesanan', compact('packages'));
 }
   
-
-    public function adminDashboard()
-    {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
-            abort(403, 'Akses ditolak');
-        }
-
-        try {
-            if (\Schema::hasTable('users') && \Schema::hasTable('packages') && \Schema::hasTable('bookings')) {
-                $totalUsers = User::count();
-                $totalPackages = Package::count();
-                $totalBookings = Booking::count();
-                $pendingPayments = Booking::where('payment_status', 'pending')->count();
-            } else {
-                $totalUsers = 0;
-                $totalPackages = 0;
-                $totalBookings = 0;
-                $pendingPayments = 0;
-            }
-        } catch (\Exception $e) {
-            $totalUsers = 0;
-            $totalPackages = 0;
-            $totalBookings = 0;
-            $pendingPayments = 0;
-        }
-        
-        return view('admin.beranda', compact(
-            'totalUsers',
-            'totalPackages', 
-            'totalBookings',
-            'pendingPayments'
-        ));
+public function deleteBooking($id)
+{
+    if (!Auth::check() || Auth::user()->role !== 'admin') {
+        abort(403);
     }
 
-    public function adminManagePackages()
+    $booking = Booking::findOrFail($id);
+
+    $booking->delete();
+
+    return redirect()->back()->with('success', 'Data pendaftar berhasil dihapus.');
+}
+
+    public function adminDashboard()
+{
+    if (!Auth::check() || Auth::user()->role !== 'admin') {
+        abort(403, 'Akses ditolak');
+    }
+
+    try {
+        // Total pendaftar (booking)
+        $totalPendaftar = Booking::count();
+
+        // Total paket aktif
+        $totalPaket = Package::where('is_active', 1)->count();
+
+        // Total tanggal keberangkatan
+       $totalTanggal = \DB::table('package_dates')->count();
+
+        // Pendaftar per paket
+        $pendaftarPerPaket = Package::where('is_active', 1)
+            ->withCount([
+                'bookings as total_jamaah'
+            ])->get();
+
+        // Pembayaran pending
+        $pendingPayments = Booking::where('payment_status', 'pending')->count();
+
+    } catch (\Exception $e) {
+        $totalPendaftar = 0;
+        $totalPaket = 0;
+        $totalTanggal = 0;
+        $pendaftarPerPaket = collect([]);
+        $pendingPayments = 0;
+    }
+
+    return view('admin.beranda', compact(
+        'totalPendaftar',
+        'totalPaket',
+        'totalTanggal',
+        'pendaftarPerPaket',
+        'pendingPayments'
+    ));
+}    public function adminManagePackages()
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             abort(403, 'Akses ditolak');
@@ -294,24 +313,21 @@ public function index()
         return view('admin.kelola', compact('packages'));
     }
 
-    public function adminVerifyPayments()
-    {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
-            abort(403, 'Akses ditolak');
-        }
-
-        try {
-            if (\Schema::hasTable('bookings')) {
-                $bookings = Booking::with(['user', 'package', 'packageDate'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            } else {
-                $bookings = collect([]);
-            }
-        } catch (\Exception $e) {
-            $bookings = collect([]);
-        }
-
-        return view('admin.pendaftar', compact('bookings'));
+   public function adminVerifyPayments()
+{
+    if (!Auth::check() || Auth::user()->role !== 'admin') {
+        abort(403, 'Akses ditolak');
     }
+
+    $bookings = Booking::with([
+        'user',
+        'package',
+        'packageDate'
+    ])
+    ->orderBy('created_at', 'desc')
+    ->get();
+
+    return view('admin.pendaftar', compact('bookings'));
+}
+
 }

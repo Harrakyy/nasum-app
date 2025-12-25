@@ -9,33 +9,68 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    // LOGIN
-   public function webLogin(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-    ]);
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN USER
+    |--------------------------------------------------------------------------
+    */
+    public function webLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $remember = $request->boolean('remember');
+        if (Auth::attempt($credentials)) {
 
-    if (Auth::attempt($credentials, $remember)) {
-        $request->session()->regenerate();
+            if (auth()->user()->role !== 'user') {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Gunakan halaman login admin']);
+            }
 
-        if (auth()->user()->role === 'admin') {
+            $request->session()->regenerate();
+            return redirect()->route('home');
+        }
+
+        return back()->withErrors(['email' => 'Email atau password salah']);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN ADMIN
+    |--------------------------------------------------------------------------
+    */
+    public function showAdminLoginForm()
+    {
+        return view('admin.login'); // buat view ini nanti
+    }
+
+    public function adminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+
+            if (auth()->user()->role !== 'admin') {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Anda bukan admin']);
+            }
+
+            $request->session()->regenerate();
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('home');
+        return back()->withErrors(['email' => 'Email atau password salah']);
     }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah',
-    ]);
-}
-
-
-    // REGISTER USER
+    /*
+    |--------------------------------------------------------------------------
+    | REGISTER USER ONLY
+    |--------------------------------------------------------------------------
+    */
     public function register(Request $request)
     {
         $request->validate([
@@ -51,16 +86,21 @@ class AuthController extends Controller
             'role'     => 'user',
         ]);
 
-        return redirect('/login')->with('success', 'Akun berhasil dibuat');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat');
     }
 
-    // LOGOUT
-    public function weblogout()
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
+    |--------------------------------------------------------------------------
+    */
+    public function webLogout()
     {
         Auth::logout();
+
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return redirect()->to('/login');
+        return redirect()->route('login');
     }
 }
