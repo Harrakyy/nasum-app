@@ -209,12 +209,17 @@
         </div>
     </section>
 
-        <button type="button"
-                class="btn btn-booking"
-                onclick="window.location.href='{{ route('booking.form') }}'">
-            Pesan Sekarang
-        </button>
+    <section class="booking-cta">
+        <div class="container">
+            <h3 class="fw-bold mb-3">Umroh Plus 12 Hari</h3>
+            <p>Dapatkan penawaran harga menarik sekarang juga sebelum kehabisan.</p>
 
+            <a href="{{ route('booking.form') }}"
+            class="btn btn-booking text-decoration-none">
+            Pesan Sekarang
+            </a>
+        </div>
+    </section>
 
 
     <footer class="bg-dark text-white py-5">
