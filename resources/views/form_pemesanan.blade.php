@@ -274,7 +274,7 @@
 
                 <div class="col-lg-8">
                   
-    <form method="POST" action="{{ route('booking.store') }}">
+    <form id="bookingForm" method="POST" action="{{ route('booking.store') }}">
     @csrf
     <input type="hidden" name="package_id" id="package_id" value="">
     <input type="hidden" name="room_type" id="room_type" value="">
