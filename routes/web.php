@@ -16,6 +16,8 @@ use App\Http\Controllers\PackageController;
 */
 Route::get('/booking', [BookingController::class, 'form'])
     ->name('booking.form');
+Route::get('/booking/{booking}', [BookingController::class, 'detail'])
+    ->name('booking.detail');
 Route::post('/pesan', [BookingController::class, 'webStore'])
     ->name('booking.store')
     ->middleware('auth');
