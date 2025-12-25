@@ -213,7 +213,7 @@
         <div class="container">
             <h3 class="fw-bold mb-3">Umroh Plus 12 Hari</h3>
             <p>Dapatkan penawaran harga menarik sekarang juga sebelum kehabisan.</p>
-            <a href="{{ route('booking.form') }}" class="btn btn-booking text-decoration-none">Pesan Sekarang</a>
+            <div href="{{ route('booking.form') }}" class="btn btn-booking text-decoration-none">Pesan Sekarang</div>
         </div>
     </section>
 
