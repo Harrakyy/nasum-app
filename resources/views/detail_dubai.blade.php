@@ -35,7 +35,7 @@
 
         .facility-icon {
             font-size: 1.5rem;
-            color: #00ff8c;
+            color: #ffc107;
             margin-right: 15px;
             width: 40px;
             height: 40px;
