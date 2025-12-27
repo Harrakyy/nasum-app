@@ -191,36 +191,34 @@ class PackageController extends Controller
     public function webDestroy($id)
     {
         $package = Package::findOrFail($id);
-        $package->delete();
+       $package->update(['is_active' => false]);
 
         return redirect()->route('admin.manage.packages')
             ->with('success', 'Paket berhasil dihapus.');
     }
 
-    public function webAddDate(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'package_id' => 'required|exists:packages,id',
-            'departure_date' => 'required|date|after:today',
-            'display_date' => 'required|string',
-            'available_slots' => 'required|integer|min:1',
-        ]);
+   public function webAddDate(Request $request, $packageId)
+{
+    $validator = Validator::make($request->all(), [
+        'departure_date' => 'required|date|after:today',
+        'display_date' => 'required|string',
+        'available_slots' => 'required|integer|min:1',
+    ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $date = PackageDate::create([
-            'package_id' => $request->package_id,
-            'departure_date' => $request->departure_date,
-            'display_date' => $request->display_date,
-            'available_slots' => $request->available_slots,
-            'is_available' => true
-        ]);
-
-        return redirect()->route('admin.manage.packages')
-            ->with('success', 'Tanggal keberangkatan berhasil ditambahkan.');
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
     }
+
+    PackageDate::create([
+        'package_id' => $packageId,
+        'departure_date' => $request->departure_date,
+        'display_date' => $request->display_date,
+        'available_slots' => $request->available_slots,
+        'is_available' => true,
+    ]);
+
+    return redirect()
+        ->route('admin.manage.packages')
+        ->with('success', 'Tanggal keberangkatan berhasil ditambahkan.');
+}
 }
