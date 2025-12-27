@@ -255,6 +255,76 @@
                     <i class="bi bi-plus-lg"></i> Tambah Paket
                 </button>
             </div>
+             @foreach ($packages as $package)
+    <div class="package-card">
+
+        {{-- HEADER --}}
+        <div class="d-flex justify-content-between mb-2">
+            <h4 class="fw-bold">{{ $package->name }}</h4>
+
+            <div>
+                <a href="#" class="text-muted me-2" data-bs-toggle="modal"
+                   data-bs-target="#editPaket{{ $package->id }}">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                {{-- NON-DESTRUKTIF --}}
+                <form action="{{ route('admin.packages.destroy', $package->id) }}"
+                      method="POST" class="d-inline"
+                      onsubmit="return confirm('Paket akan dinonaktifkan. Lanjutkan?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-link text-danger p-0">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <p class="text-muted">{{ $package->duration_days }} Hari</p>
+
+        {{-- HARGA --}}
+        <div class="price-list mb-3">
+            <p>Double <b class="text-success">Rp {{ number_format($package->double_price) }}</b></p>
+            <p>Triple <b class="text-success">Rp {{ number_format($package->triple_price) }}</b></p>
+            <p>Quad <b class="text-success">Rp {{ number_format($package->quad_price) }}</b></p>
+        </div>
+
+        {{-- TANGGAL --}}
+        <h6 class="fw-bold">Tanggal Keberangkatan</h6>
+
+        @foreach ($package->dates as $date)
+        <div class="date-item">
+            <span>{{ $date->display_date }}</span>
+            <form action="{{ route('admin.dates.destroy', $date->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-sm btn-warning">Hapus</button>
+            </form>
+        </div>
+        @endforeach
+
+        {{-- TAMBAH TANGGAL --}}
+        <form method="POST"
+              action="{{ route('admin.packages.dates.store', $package->id) }}"
+              class="mt-2">
+            @csrf
+            <div class="row g-2">
+                <div class="col-md-5">
+                    <input type="date" name="departure_date" class="form-control" required>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" name="display_date" class="form-control"
+                           placeholder="15 Januari 2025 (Rabu)" required>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-dark btn-sm w-100">Tambah</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    @endforeach
 
             <div class="package-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -298,48 +368,31 @@
         </div>
     </main>
 
-    <div class="modal fade" id="tambahPaketModal" tabindex="-1" aria-labelledby="tambahPaketModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+    <div class="modal fade" id="tambahPaketModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <form method="POST" action="{{ route('admin.packages.store') }}">
+                @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tambahPaketModalLabel">Tambah Paket Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Tambah Paket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="row mb-3 g-2">
-                            <div class="col-8">
-                                <label for="namaPaket" class="form-label small">Nama Paket *</label>
-                                <input type="text" class="form-control" id="namaPaket" required>
-                            </div>
-                            <div class="col-4">
-                                <label for="durasi" class="form-label small">Durasi *</label>
-                                <input type="text" class="form-control" id="durasi" placeholder="Contoh: 9 Hari"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small d-block">Harga per Tipe Kamar *</label>
-                            <div class="input-group mb-2"><span
-                                    class="input-group-text small bg-white text-muted">Double (Rp)</span><input
-                                    type="number" class="form-control" placeholder="30000000" required></div>
-                            <div class="input-group mb-2"><span
-                                    class="input-group-text small bg-white text-muted">Triple (Rp)</span><input
-                                    type="number" class="form-control" placeholder="25000000" required></div>
-                            <div class="input-group mb-2"><span class="input-group-text small bg-white text-muted">Quad
-                                    (Rp)</span><input type="number" class="form-control" placeholder="22000000"
-                                    required></div>
-                        </div>
-                    </form>
+                    <input class="form-control mb-2" name="name" placeholder="Nama Paket" required>
+                    <input class="form-control mb-2" name="duration_days" placeholder="Durasi (Hari)" required>
+                    <input class="form-control mb-2" name="double_price" placeholder="Harga Double" required>
+                    <input class="form-control mb-2" name="triple_price" placeholder="Harga Triple" required>
+                    <input class="form-control mb-2" name="quad_price" placeholder="Harga Quad" required>
                 </div>
-                <div class="modal-footer justify-content-center border-top-0">
-                    <button type="button" class="btn btn-batal" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-simpan">Simpan</button>
+                <div class="modal-footer">
+                    <button class="btn btn-batal" data-bs-dismiss="modal">Batal</button>
+                    <button class="btn btn-simpan">Simpan</button>
                 </div>
-            </div>
-        </div>
-    </div>
+                </form>
+                </div>
+                </div>
+                </div>
+
 
     <div class="modal fade" id="editPaketModal" tabindex="-1" aria-labelledby="editPaketModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
